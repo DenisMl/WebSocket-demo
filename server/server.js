@@ -5,10 +5,11 @@ let WebSocketServer = new require('ws');
 let clients = {};
 // WebSocket-server on port 8080
 let webSocketServer = new WebSocketServer.Server({port: 8080});
-webSocketServer.on('connection', function(ws) {
+webSocketServer.on('connection', function connection(ws, req) {
+  const ip = req.connection.remoteAddress;
   let id = Math.random();
   clients[id] = ws;
-  console.log("New client connection: " + id);
+  console.log(`New client connection: Id: ${id}, Ip: ${ip}`);
   ws.on('message', function(message) {
     console.log('Message received: ' + message);
     for (let key in clients) {
@@ -16,7 +17,7 @@ webSocketServer.on('connection', function(ws) {
     }
   });
   ws.on('close', function() {
-    console.log('Connection closed on client:' + id);
+    console.log('Connection closed on client: ' + id);
     delete clients[id];
   });
 });
